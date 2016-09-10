@@ -1,0 +1,4 @@
+sceneSetups:
+- path: C:/Users/isort/Documents/Programming/Graphics/Lab 05/Assets/MainScene.unity
+  isLoaded: 1
+  isActive: 1
