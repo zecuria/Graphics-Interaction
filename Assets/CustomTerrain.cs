@@ -1,71 +1,45 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
+[RequireComponent(typeof(Terrain))]
 public class CustomTerrain : MonoBehaviour
 {
+    public Vector3 initial = new Vector3(1000, 600, 1000);
+
+    public DiamondSquare terrainMap;
 
     Terrain terrain;
     TerrainData tData;
 
-    int xRes;
-    int yRes;
-
-    float[,] heights;
-
     void Start()
     {
-        terrain = transform.GetComponent<Terrain>();
+        terrain = GetComponent<Terrain>();
         tData = terrain.terrainData;
 
-        xRes = tData.heightmapWidth;
-        yRes = tData.heightmapHeight;
+        transform.position = new Vector3(-1 * initial.x / 2, 0, -1*initial.y / 2);
+
+        Generate();
+        Debug.Log("testing");
     }
 
-    void OnGUI()
-    {
-        if (GUI.Button(new Rect(10, 10, 100, 25), "Wrinkle"))
-        {
-            randomizePoints(0.1f);
-        }
-
-        if (GUI.Button(new Rect(10, 40, 100, 25), "Reset"))
-        {
-            resetPoints();
-        }
-    }
-
-    void randomizePoints(float strength)
-    {
-        heights = tData.GetHeights(0, 0, xRes, yRes);
-
-        for (int y = 0; y < yRes; y++)
-        {
-            for (int x = 0; x < xRes; x++)
-            {
-                heights[x, y] = Random.Range(0.0f, strength) * 0.5f;
-            }
-        }
-
-        tData.SetHeights(0, 0, heights);
-    }
-
-    void resetPoints()
-    {
-        var heights = tData.GetHeights(0, 0, xRes, yRes);
-        for (int y = 0; y < yRes; y++)
-        {
-            for (int x = 0; x < xRes; x++)
-            {
-                heights[x, y] = 0;
-            }
-        }
-
-        tData.SetHeights(0, 0, heights);
-    }
-
-    // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetKeyDown("space"))
+        {
+            Generate();
+        }
     }
+
+    void Generate()
+    {
+        terrainMap = new DiamondSquare(129);
+
+        tData.heightmapResolution = terrainMap.size;
+
+        tData.SetHeights(0, 0, terrainMap.heights);
+
+        tData.size = new Vector3(initial.x, initial.y, initial.z);
+    }
+
 }
